@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://raw.githubusercontent.com/tt-acm/DesignExplorer/gh-pages/js/GoogleClient.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <style>
+    #inputSliders { font-family:sans-serif;outline:none;padding-top:15px;width:960px;margin: 0 auto;}
+    #content { width:960px;margin: 0 auto;}
+    .inputgroup {border:none;}
+    .slider { width:210px;float:left;padding:10px;}
+    label { float:left;font-weight:bold;padding-bottom:10px;}
+    input[type=range] { float:left;clear:left;margin-right:10px;width:130px;}
+    input[type=range]::-ms-track { background: transparent;border-color: transparent;color: transparent;-webkit-appearance: none}
+    input[type=range]::-ms-track { -ms-appearance: none; height: 3px;background-color: #d5d5d5; margin-right: 0;
+    	margin-top: 5px;margin-bottom: 5px;	border:0; }
+    input[type=range]::-ms-thumb { background-color: #FFF; border: 3px solid rgb(150,150,150);
+        border-radius: 5px; height: 10px;width: 1px; }
+    input[type=range]::-webkit-slider-runnable-track { height: 5px;background:#7c7c7c; margin-top: -4px;}
+    input[type=range]::-webkit-slider-thumb { margin-top:-6px;}
+    #inputSliders p {padding-top:10px;}
+    #overhang {background-color:#e6e6e6}
+    #angle {background-color:#f2f2f2}
+    #wsill {background-color:#e6e6e6}
+    #ceiling {background-color:#f2f2f2}
+  </style>
+</head>
+
+<body>
+  <div id="inputSliders">
+			<form id="sliders" autocomplete="off">
+				<fieldset class="inputgroup">
+          <div class="slider" id="overhang">
+					<label>Overhang Depth (ft)</label>
+					<input type="range" name="over" id="over" value="0" min="0" max="10" step = "2"><p id="overoutput">0ft</p></div>
+          <div class="slider" id="angle">
+          <label>Overhang Angle</label>
+					<input type="range" name="ang" id="ang" value="0" min="0" max="10" step = "5"><p id="angoutput">0°</p></div>
+          <div class="slider" id="wsill">
+          <label>Sill Type</label>
+					<input type="range" name="sill" id="sill" value="0" min="0" max="3" step = "1.5"><p id="silloutput">none</p></div>
+          <div class="slider" id="ceiling">
+          <label>Ceiling Height (ft)</label>
+					<input type="range" name="ciel" id="ciel" value="10" min="10" max="12.5"  step = "2.5"><p id="cieloutput">10ft</p></div>
+				</fieldset>
+			</form>
+		</div>
+
+    <div id="content">
+    </div>
+
+
+  <script>
+    // Get inputs from the sliders
+    var Over = $("#over").val().toString(); // Air tmperature in Celcius
+    var Ang = $("#ang").val().toString(); // Mean radiant tmperature in Celcius
+    var Sill = $("#sill").val().toString(); // Wind velocity in m/s
+    var Ciel = $("#ciel").val().toString(); // Relative humidity in %
+
+    // Dictionary to interpret the meaning of sill.
+    sillDict = {'0':'none', '1.5':'spandr', '3':'solid'}
+
+    // Update inputs
+    $("#over").on("input", function(event) {
+      Over = $(this).val();
+      $("#overoutput").text(Over.toString() + "ft");
+      updateImg();
+    });
+    $("#ang").on("input", function(event) {
+      Ang = $(this).val();
+      $("#angoutput").text(Ang.toString() + "°");
+      updateImg();
+    });
+    $("#sill").on("input", function(event) {
+      Sill = $(this).val();
+      $("#silloutput").text(sillDict[Sill]);
+      updateImg();
+    });
+    $("#ciel").on("input", function(event) {
+      Ciel = $(this).val();
+      $("#cieloutput").text(Ciel.toString() + "ft");
+      updateImg();
+    });
+
+
+    // Retrive the images from github.
+    updateImg = function(){
+      var URL = 'https://raw.githubusercontent.com/chriswmackey/explorer-test/master/data/'
+      URL = URL + 'sill%2C' + Sill + '_'
+      URL = URL + 'overhang%2C' + Over + '_'
+      URL = URL + 'roofAngle%2C' + Ang + '_'
+      URL = URL + 'ceilingHeight%2C' + Ciel + '__CaptureView.png'
+			console.log(URL)
+      d3.select(".imgdisplay").remove()
+
+      svg.append("image")
+        .attr('xlink:href', URL)
+        .attr('class', 'pico')
+        .attr('width', '900')
+      	.attr('height', '900')
+      	.attr('x', '30')
+    		.attr('y', '-100')
+    		.attr("class","imgdisplay")
+    }
+
+
+    // Build a URL from the inputs.
+    var URL = 'https://raw.githubusercontent.com/chriswmackey/explorer-test/master/data/'
+    URL = URL + 'sill%2C' + Sill + '_'
+    URL = URL + 'overhang%2C' + Over + '_'
+    URL = URL + 'roofAngle%2C' + Ang + '_'
+    URL = URL + 'ceilingHeight%2C' + Ciel + '__CaptureView.png'
+    console.log(URL)
+
+    // Display the image in the scene.
+    var svg = d3.select("#content").append("svg")
+    .attr("width", 960)
+    .attr("height", 700)
+    svg.append("image")
+        .attr('xlink:href', URL)
+        .attr('class', 'pico')
+        .attr('width', '900')
+    		.attr('height', '900')
+    		.attr('x', '30')
+    		.attr('y', '-100')
+    		.attr("class","imgdisplay")
+
+  </script>
+</body>
