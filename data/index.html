@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	<meta charset = "UTF-8" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <script src="https://raw.githubusercontent.com/tt-acm/DesignExplorer/gh-pages/js/GoogleClient.js"></script>
   <script src="https://d3js.org/d3.v4.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="https://raw.githubusercontent.com/PayettePeople/Thermal-Comfort-Tool/master/static/js/modernizr-custom.js"></script>
   <style>
-    #inputSliders { font-family:sans-serif;outline:none;padding-top:15px;width:960px;margin: 0 auto;}
-    #content { width:960px;margin: 0 auto;}
+    body { text-align: center; }
+    #inputSliders { font-family:sans-serif;outline:none;margin-top:15px;text-align: center; }
     .inputgroup {border:none;}
     .slider { width:210px;float:left;padding:10px;}
     label { float:left;font-weight:bold;padding-bottom:10px;}
     input[type=range] { float:left;clear:left;margin-right:10px;width:130px;}
     input[type=range]::-ms-track { background: transparent;border-color: transparent;color: transparent;-webkit-appearance: none}
-    input[type=range]::-ms-track { -ms-appearance: none; height: 3px;background-color: #d5d5d5; margin-right: 0;
-    	margin-top: 5px;margin-bottom: 5px;	border:0; }
-    input[type=range]::-ms-thumb { background-color: #FFF; border: 3px solid rgb(150,150,150);
-        border-radius: 5px; height: 10px;width: 1px; }
     input[type=range]::-webkit-slider-runnable-track { height: 5px;background:#7c7c7c; margin-top: -4px;}
     input[type=range]::-webkit-slider-thumb { margin-top:-6px;}
     #inputSliders p {padding-top:10px;}
-    #overhang {background-color:#e6e6e6}
-    #angle {background-color:#f2f2f2}
-    #wsill {background-color:#e6e6e6}
+    #overhang {background-color:#cccccc}
+    #angle {background-color:#e6e6e6}
+    #wsill {background-color:#d9d9d9}
     #ceiling {background-color:#f2f2f2}
   </style>
 </head>
@@ -48,10 +45,108 @@
 			</form>
 		</div>
 
-    <div id="content">
-    </div>
+
+  <script>
+    // Get inputs from the sliders
+    var Over = $("#over").val().toString(); // Air tmperature in Celcius
+    var Ang = $("#ang").val().toString(); // Mean radiant tmperature in Celcius
+    var Sill = $("#sill").val().toString(); // Wind velocity in m/s
+    var Ciel = $("#ciel").val().toString(); // Relative humidity in %
+
+    // Dictionary to interpret the meaning of sill.
+    sillDict = {'0':'none', '1.5':'spandr', '3':'solid'}
+
+    // Update inputs
+    $("#over").on("input", function(event) {
+      Over = $(this).val();
+      $("#overoutput").text(Over.toString() + "ft");
+      updateImg();
+    });
+    $("#ang").on("input", function(event) {
+      Ang = $(this).val();
+      $("#angoutput").text(Ang.toString() + "°");
+      updateImg();
+    });
+    $("#sill").on("input", function(event) {
+      Sill = $(this).val();
+      $("#silloutput").text(sillDict[Sill]);
+      updateImg();
+    });
+    $("#ciel").on("input", function(event) {
+      Ciel = $(this).val();
+      $("#cieloutput").text(Ciel.toString() + "ft");
+      updateImg();
+    });
+
+    // Update inputs
+    if (Modernizr.oninput) {
+      $("#over").on("change", function(event) {
+        Over = $(this).val();
+        $("#overoutput").text(Over.toString() + "ft");
+        updateImg();
+      });
+      $("#ang").on("change", function(event) {
+        Ang = $(this).val();
+        $("#angoutput").text(Ang.toString() + "°");
+        updateImg();
+      });
+      $("#sill").on("change", function(event) {
+        Sill = $(this).val();
+        $("#silloutput").text(sillDict[Sill]);
+        updateImg();
+      });
+      $("#ciel").on("change", function(event) {
+        Ciel = $(this).val();
+        $("#cieloutput").text(Ciel.toString() + "ft");
+        updateImg();
+      });
+    }
 
 
+    // Retrive the images from github.
+    updateImg = function(){
+      var URL = 'https://raw.githubusercontent.com/chriswmackey/explorer-test/master/data/'
+      URL = URL + 'sill%2C' + Sill + '_'
+      URL = URL + 'overhang%2C' + Over + '_'
+      URL = URL + 'roofAngle%2C' + Ang + '_'
+      URL = URL + 'ceilingHeight%2C' + Ciel + '__CaptureView.png'
+			console.log(URL)
+      d3.select(".imgdisplay").remove()
+
+      svg.append("image")
+        .attr('xlink:href', URL)
+        .attr('class', 'pico')
+        .attr('width', '900')
+      	.attr('height', '900')
+      	.attr('x', '30')
+    		.attr('y', '0')
+    		.attr("class","imgdisplay")
+    }
+
+
+    // Build a URL from the inputs.
+    var URL = 'https://raw.githubusercontent.com/chriswmackey/explorer-test/master/data/'
+    URL = URL + 'sill%2C' + Sill + '_'
+    URL = URL + 'overhang%2C' + Over + '_'
+    URL = URL + 'roofAngle%2C' + Ang + '_'
+    URL = URL + 'ceilingHeight%2C' + Ciel + '__CaptureView.png'
+    console.log(URL)
+
+    // Display the image in the scene.
+    var svg = d3.select("body").append("svg")
+    .attr("width", 960)
+    .attr("height", 700)
+    svg.append("image")
+        .attr('xlink:href', URL)
+        .attr('class', 'pico')
+        .attr('width', '900')
+    		.attr('height', '900')
+    		.attr('x', '30')
+    		.attr('y', '0')
+    		.attr("class","imgdisplay")
+
+  </script>
+</body>
   <script>
     // Get inputs from the sliders
     var Over = $("#over").val().toString(); // Air tmperature in Celcius
@@ -101,7 +196,7 @@
         .attr('width', '900')
       	.attr('height', '900')
       	.attr('x', '30')
-    		.attr('y', '-100')
+    		.attr('y', '0')
     		.attr("class","imgdisplay")
     }
 
@@ -124,7 +219,7 @@
         .attr('width', '900')
     		.attr('height', '900')
     		.attr('x', '30')
-    		.attr('y', '-100')
+    		.attr('y', '0')
     		.attr("class","imgdisplay")
 
   </script>
