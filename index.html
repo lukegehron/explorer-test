@@ -82,7 +82,7 @@
 
   <script>
     // Load in all of the data.
-    var dataObj = JSON.parse(allResults)
+    var dataObj = JSON.parse(https://raw.githubusercontent.com/lukegehron/explorer-test/master/data2/allData.json)
     
     // Get inputs from the sliders
     var Prog = $("#prog").val().toString(); // Building Program
@@ -145,7 +145,7 @@
     
     // Function to retrive the images from github.
     updateImg = function(){
-      var URL = 'https://raw.githubusercontent.com/chriswmackey/explorer-test/master/data3/'
+      var URL = 'https://raw.githubusercontent.com/chriswmackey/explorer-test/master/data2/'
       URL = URL + 'Lab_' + Prog
       URL = URL + 'Glz_' + Glz + '.gif'
       d3.select(".imgdisplay").remove()
